@@ -44,6 +44,11 @@ public class FileChecker {
                     System.err.println("Error when reading file: " + aFilePath.toString());
                 }
             }
+            try {
+                rs.closeService();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         };
 
         for (int i = 0; i < paraCount; ++i)

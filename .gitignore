@@ -57,6 +57,7 @@ fabric.properties
 
 # Package Files #
 *.jar
+!lib/poi-3.17.jar
 *.war
 *.nar
 *.ear

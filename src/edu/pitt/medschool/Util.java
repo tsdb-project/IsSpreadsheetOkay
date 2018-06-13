@@ -1,9 +1,28 @@
 package edu.pitt.medschool;
 
+import org.apache.poi.ss.usermodel.DateUtil;
+
 import java.io.*;
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.TimeZone;
 
 public class Util {
+
+    /**
+     * Convert serial# time to a specific timestamp
+     *
+     * @param serial   String Serial number
+     * @param timeZone Null for NY(PGH) timezone
+     * @return Apache POI defined timestamp
+     */
+    public static long serialTimeToLongDate(String serial, TimeZone timeZone) {
+        if (timeZone == null)
+            timeZone = TimeZone.getTimeZone("UTC");
+        double sTime = Double.valueOf(serial);
+        Date d = DateUtil.getJavaDate(sTime, timeZone);
+        return d.getTime();
+    }
 
     /**
      * Get all specific files under a directory

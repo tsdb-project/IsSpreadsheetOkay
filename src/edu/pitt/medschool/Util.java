@@ -3,11 +3,30 @@ package edu.pitt.medschool;
 import org.apache.poi.ss.usermodel.DateUtil;
 
 import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.TimeZone;
 
 public class Util {
+
+    public static Date dateTimeFormatToDate(String dateTime, String format, TimeZone timeZone) throws ParseException {
+        if (timeZone == null)
+            timeZone = TimeZone.getTimeZone("America/New_York");
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        sdf.setTimeZone(timeZone);
+        return sdf.parse(dateTime);
+    }
+
+    public static Instant dateTimeFormatToInstant(String dateTime, String format, TimeZone timeZone) throws ParseException {
+        return dateTimeFormatToDate(dateTime, format, timeZone).toInstant();
+    }
+
+    public static long dateTimeFormatToTimestamp(String dateTime, String format, TimeZone timeZone) throws ParseException {
+        return dateTimeFormatToInstant(dateTime, format, timeZone).toEpochMilli();
+    }
 
     /**
      * Convert serial# time to a specific timestamp

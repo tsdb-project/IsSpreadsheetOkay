@@ -10,7 +10,7 @@ import java.util.LinkedList;
 public class ReportService {
 
     public static class Report {
-        private String filepath, filename;
+        private String filepath, filename, eegUUID;
         private long filesize;
 
         private LinkedList<String> hardProblem = new LinkedList<>();
@@ -20,6 +20,10 @@ public class ReportService {
             this.filepath = fp;
             this.filename = fn;
             this.filesize = fs;
+        }
+
+        public void setEegUUID(String eegUUID) {
+            this.eegUUID = eegUUID;
         }
 
         public boolean isAllGood() {

@@ -3,11 +3,15 @@ package edu.pitt.medschool;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Service for writing reports
  */
 public class ReportService {
+
+    private AtomicInteger counter = new AtomicInteger(0);
+    private static String writeOutDataTemplate = "%d,\"%s\",\"%s\",%d,\"%s\",\"%s\",\"%s\"";
 
     public static class Report {
         private String filepath, filename, eegUUID;
@@ -46,17 +50,30 @@ public class ReportService {
         bw = new BufferedWriter(
                 (new OutputStreamWriter(
                         new FileOutputStream(path), StandardCharsets.UTF_8)));
+        bw.write("id,File Name,File Path,File Size,EEG UUID,Problem Type,Comments");
+        bw.newLine();
     }
 
-    public boolean WriteOut(Report data) {
-        if (data.isAllGood()) return true;
+    public void WriteOut(Report data) {
+        if (data.isAllGood()) return;
         try {
-            bw.write("Test");
+            for (String hard : data.hardProblem) {
+                bw.write(String.format(writeOutDataTemplate,
+                        counter.getAndIncrement(),
+                        data.filename, data.filepath, data.filesize, data.eegUUID,
+                        "Critical", hard));
+                bw.newLine();
+            }
+            for (String soft : data.softProblem) {
+                bw.write(String.format(writeOutDataTemplate,
+                        counter.getAndIncrement(),
+                        data.filename, data.filepath, data.filesize, data.eegUUID,
+                        "Warning", soft));
+                bw.newLine();
+            }
         } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+            System.err.println("Error when writing logs for file: " + data.filepath);
         }
-        return true;
     }
 
     public void closeService() throws IOException {

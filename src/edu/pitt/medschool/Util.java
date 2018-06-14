@@ -59,10 +59,11 @@ public class Util {
 
         FilenameFilter extensionFilter = (dirs, name) -> {
             // Filter hidden or not wanted file
-            return !name.startsWith(".") && name.toLowerCase().endsWith("." + type) && !dirs.isDirectory();
+            return !name.startsWith(".") && name.toLowerCase().endsWith("." + type);
         };
 
-        LinkedList<File> files = new LinkedList<>();
+        LinkedList<File> allMatchedPath = new LinkedList<>();
+
         File[] mainFileList = folder.listFiles();
         if (mainFileList == null) return new String[0];
 
@@ -70,18 +71,18 @@ public class Util {
         toCheck = folder.listFiles(extensionFilter);
         if (toCheck == null) return new String[0];
 
-        Collections.addAll(files, toCheck);
+        Collections.addAll(allMatchedPath, toCheck);
 
         for (File aFile : mainFileList) {
             if (aFile.isDirectory()) {
                 toCheck = aFile.listFiles(extensionFilter);
                 if (toCheck == null) continue;
-                Collections.addAll(files, toCheck);
+                Collections.addAll(allMatchedPath, toCheck);
             }
         }
 
-        List<String> final_res = new ArrayList<>(files.size());
-        files.forEach((file -> {
+        List<String> final_res = new ArrayList<>(allMatchedPath.size());
+        allMatchedPath.forEach((file -> {
             if (file.isFile()) {
                 final_res.add(file.getAbsolutePath());
             }

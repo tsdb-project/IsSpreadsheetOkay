@@ -6,9 +6,7 @@ import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.TimeZone;
+import java.util.*;
 
 public class Util {
 
@@ -59,15 +57,28 @@ public class Util {
                 return new String[0];
         }
 
-        FilenameFilter fileFilter = (dirs, name) -> {
+        FilenameFilter extensionFilter = (dirs, name) -> {
             // Filter hidden or not wanted file
-            return !name.startsWith(".") && name.toLowerCase().endsWith("." + type);
+            return !name.startsWith(".") && name.toLowerCase().endsWith("." + type) && !dirs.isDirectory();
         };
-        File[] files = folder.listFiles(fileFilter);
 
-        assert files != null;
-        if (files.length == 0)
-            return new String[0];
+        LinkedList<File> files = new LinkedList<>();
+        File[] mainFileList = folder.listFiles();
+        if (mainFileList == null) return new String[0];
+
+        File[] toCheck;
+        toCheck = folder.listFiles(extensionFilter);
+        if (toCheck == null) return new String[0];
+
+        Collections.addAll(files, toCheck);
+
+        for (File aFile : mainFileList) {
+            if (aFile.isDirectory()) {
+                toCheck = aFile.listFiles(extensionFilter);
+                if (toCheck == null) return new String[0];
+                Collections.addAll(files, toCheck);
+            }
+        }
 
         LinkedList<String> file_list = new LinkedList<>();
         for (File file : files) {

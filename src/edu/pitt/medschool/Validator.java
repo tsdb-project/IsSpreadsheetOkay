@@ -18,7 +18,15 @@ public class Validator {
 
         ReportService rs = new ReportService(args[2].trim());
         FileChecker fc = new FileChecker(rs, lf);
-        fc.AddArrayFiles(Util.getAllSpecificFileInDirectory(args[1], "csv"));
+
+        String[] targets = Util.getAllSpecificFileInDirectory(args[1], "csv");
+
+        if (targets.length == 0) {
+            System.err.println("Nothing to check!");
+            return;
+        }
+
+        fc.AddArrayFiles(targets);
 
         fc.startCheck();
     }

@@ -6,10 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.TimeZone;
+import java.util.concurrent.*;
 
 import static edu.pitt.medschool.CheckFunc.*;
 import static edu.pitt.medschool.Util.*;
@@ -35,7 +33,7 @@ public class FileChecker {
      */
     public void startCheck() {
         ExecutorService scheduler = Executors.newFixedThreadPool(paraCount);
-        Runnable importTask = () -> {
+        Runnable checkerTask = () -> {
             Path aFilePath;
             while ((aFilePath = fileQueue.poll()) != null) {
                 try {
@@ -44,16 +42,17 @@ public class FileChecker {
                     System.err.println("Error when reading file: " + aFilePath.toString());
                 }
             }
-            try {
-                rs.closeService();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         };
 
         for (int i = 0; i < paraCount; ++i)
-            scheduler.submit(importTask);
+            scheduler.submit(checkerTask);
         scheduler.shutdown();
+        try {
+            scheduler.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+            rs.closeService();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void AddOneFile(String path) {
@@ -97,7 +96,8 @@ public class FileChecker {
         }
         long test_start_time = -1;
         try {
-            test_start_time = dateTimeFormatToTimestamp(test_date, "yyyy.MM.ddHH:mm:ss", null);
+            test_start_time = dateTimeFormatToTimestamp(
+                    test_date, "yyyy.MM.ddHH:mm:ss", TimeZone.getTimeZone("America/New_York"));
         } catch (ParseException e) {
             fileReport.addHardProblem("Test date malformat");
         }

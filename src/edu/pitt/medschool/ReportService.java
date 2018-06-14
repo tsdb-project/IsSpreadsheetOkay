@@ -46,12 +46,17 @@ public class ReportService {
 
     private BufferedWriter bw;
 
+    private void initHeaders() throws IOException {
+        bw.write("id,File Name,File Path,File Size,EEG UUID,Problem Type,Comments");
+        bw.newLine();
+        bw.flush();
+    }
+
     public ReportService(String path) throws IOException {
         bw = new BufferedWriter(
                 (new OutputStreamWriter(
                         new FileOutputStream(path), StandardCharsets.UTF_8)));
-        bw.write("id,File Name,File Path,File Size,EEG UUID,Problem Type,Comments");
-        bw.newLine();
+        initHeaders();
     }
 
     public void WriteOut(Report data) {

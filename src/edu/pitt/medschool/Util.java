@@ -75,18 +75,19 @@ public class Util {
         for (File aFile : mainFileList) {
             if (aFile.isDirectory()) {
                 toCheck = aFile.listFiles(extensionFilter);
-                if (toCheck == null) return new String[0];
+                if (toCheck == null) continue;
                 Collections.addAll(files, toCheck);
             }
         }
 
-        LinkedList<String> file_list = new LinkedList<>();
-        for (File file : files) {
-            if (file.isFile())
-                file_list.add(file.getAbsolutePath());
-        }
+        List<String> final_res = new ArrayList<>(files.size());
+        files.forEach((file -> {
+            if (file.isFile()) {
+                final_res.add(file.getAbsolutePath());
+            }
+        }));
 
-        return file_list.toArray(new String[0]);
+        return final_res.toArray(new String[0]);
     }
 
 

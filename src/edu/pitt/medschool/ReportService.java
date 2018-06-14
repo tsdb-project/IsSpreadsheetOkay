@@ -76,6 +76,7 @@ public class ReportService {
                         "Warning", soft));
                 bw.newLine();
             }
+            bw.flush();
         } catch (IOException e) {
             System.err.println("Error when writing logs for file: " + data.filepath);
         }

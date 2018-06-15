@@ -3,8 +3,11 @@ package edu.pitt.medschool;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class Validator {
+
+    public final static SimpleDateFormat global_operation_sdf = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
 
     private static void printHelpText() {
         System.out.println("Usage: java -jar IsFileOkay.jar load_factor Path_to_check Report_file_path");
@@ -16,9 +19,11 @@ public class Validator {
     }
 
     public static void main(String[] args) throws IOException {
+        global_operation_sdf.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+
         if (args.length == 3 || args.length == 1) {
             String path_tocheck = args[0].trim(),
-                    report_file_path = new SimpleDateFormat("yyyy-MM-dd-hmss").format(new Date()) + ".csv";
+                    report_file_path = global_operation_sdf.format(new Date()) + ".csv";
             double lf;
 
             if (args.length == 1) {

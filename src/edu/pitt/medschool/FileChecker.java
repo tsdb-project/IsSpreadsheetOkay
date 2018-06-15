@@ -106,7 +106,7 @@ public class FileChecker {
             test_start_time = dateTimeFormatToTimestamp(
                     test_date, "yyyy.MM.ddHH:mm:ss", TimeZone.getTimeZone("America/New_York"));
         } catch (ParseException e) {
-            fileReport.addHardProblem("Test date malformat");
+            fileReport.addHardProblem("Test date malformation");
         }
 
         // 8th Line is column header line
@@ -116,7 +116,7 @@ public class FileChecker {
 
         // More integrity checking
         if (!columnNames[0].toLowerCase().equals("clockdatetime")) {
-            fileReport.addHardProblem("Wriong first column!");
+            fileReport.addHardProblem("Wrong first column!");
         }
 
         long totalLines = 0;
@@ -133,12 +133,12 @@ public class FileChecker {
                 continue;
             }
 
-            // Chech this line date time
+            // Check this line date time
             // Measurement time should be later than test start time
             long measurement_epoch_time = Util.serialTimeToLongDate(values[0], null);
             if (measurement_epoch_time < test_start_time) {
                 fileReport.addSoftProblem(String.format(
-                        "Measurement time ealier than test start time on line %d!", totalLines + 8));
+                        "Measurement time earlier than test start time on line %d!", totalLines + 8));
                 continue;
             }
 

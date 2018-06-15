@@ -81,11 +81,13 @@ public class Util {
         List<File> allDirs = Util.getAllSubDirectories(rootFolder);
         allDirs.add(rootFolder); // Don't forget the root dir
 
-        List<String> final_res = new ArrayList<>();
+        List<String> final_res = new LinkedList<>();
         allDirs.forEach(file -> {
             File[] targets = file.listFiles(extensionFilter);
             if (targets == null) return;
             for (File f : targets) {
+                // Folder named like '123.csv' is not good
+                if (f.isDirectory()) continue;
                 final_res.add(f.getAbsolutePath());
             }
         });

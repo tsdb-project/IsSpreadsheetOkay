@@ -6,7 +6,7 @@ public class CheckFunc {
         if (!fLine.toUpperCase().contains(pid))
             r.addHardProblem("Wrong PID in filename!");
         if (fLine.length() < 50)
-            r.addHardProblem("File UUID misformat!");
+            r.addHardProblem("File UUID malformed!");
         return fLine.substring(fLine.length() - 40, fLine.length() - 4);
     }
 

@@ -1,5 +1,6 @@
 package edu.pitt.medschool;
 
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -51,6 +52,8 @@ public class FileChecker {
         try {
             scheduler.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
             rs.closeService();
+            JOptionPane.showMessageDialog(
+                    null, "Checking finished", "Info", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception e) {
             e.printStackTrace();
         }

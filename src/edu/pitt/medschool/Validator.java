@@ -1,6 +1,11 @@
 package edu.pitt.medschool;
 
+import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -9,13 +14,26 @@ public class Validator {
 
     public final static SimpleDateFormat global_operation_sdf = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
 
-    private static void printHelpText() {
-        System.out.println("Usage: java -jar IsFileOkay.jar load_factor Path_to_check Report_file_path");
-        System.out.println("  load_factor: 0-1, how many parallels");
-        System.out.println("  Path_to_check: Check path, can be a folder or file");
-        System.out.println("  Report_file_path: Report file name (not a folder name).");
-        System.out.println("Or, you can use:");
-        System.out.println("    Fast: java -jar IsFileOkay.jar Path_to_check");
+    private JButton startButton;
+    private JPanel panel1;
+    private JTextArea checkPath;
+
+    public Validator() {
+        startButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                try {
+                    newCheckTask(checkPath.getText().trim(), global_operation_sdf.format(new Date())
+                            .replace(":", "") + ".csv", 0.5);
+                } catch (IOException e1) {
+                    StringWriter sw = new StringWriter();
+                    e1.printStackTrace(new PrintWriter(sw));
+                    JOptionPane.showMessageDialog(
+                            null, sw.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
     }
 
     public static void main(String[] args) throws IOException {
@@ -38,7 +56,11 @@ public class Validator {
 
             newCheckTask(path_tocheck, report_file_path, lf);
         } else {
-            printHelpText();
+            JFrame frame = new JFrame("Validator");
+            frame.setContentPane(new Validator().panel1);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.pack();
+            frame.setVisible(true);
         }
 
     }

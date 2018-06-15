@@ -22,9 +22,11 @@ public class FileChecker {
     private int paraCount;
     private ReportService rs;
     private final BlockingQueue<Path> fileQueue = new LinkedBlockingQueue<>();
+    private boolean isGUIMode;
 
-    public FileChecker(ReportService r, double loadFactor) throws IOException {
+    public FileChecker(ReportService r, double loadFactor, boolean gui) throws IOException {
         int availCores = Runtime.getRuntime().availableProcessors();
+        this.isGUIMode = gui;
         paraCount = (int) Math.round(loadFactor * availCores);
         paraCount = paraCount > 0 ? paraCount : 1;
         rs = r;
@@ -52,8 +54,9 @@ public class FileChecker {
         try {
             scheduler.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
             rs.closeService();
-            JOptionPane.showMessageDialog(
-                    null, "Checking finished", "Info", JOptionPane.INFORMATION_MESSAGE);
+            if (isGUIMode)
+                JOptionPane.showMessageDialog(
+                        null, "Checking finished", "Info", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception e) {
             e.printStackTrace();
         }

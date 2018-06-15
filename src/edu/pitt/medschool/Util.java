@@ -2,6 +2,7 @@ package edu.pitt.medschool;
 
 import org.apache.poi.ss.usermodel.DateUtil;
 
+import javax.swing.*;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,7 +45,10 @@ public class Util {
     private final static FileFilter directoryFilter = File::isDirectory;
 
     public static List<File> getAllSubDirectories(File file) {
-        List<File> subdirs = new LinkedList<>(Arrays.asList(file.listFiles(directoryFilter))),
+        File[] tmp = file.listFiles(directoryFilter);
+        if (tmp == null) return new ArrayList<>(0);
+
+        List<File> subdirs = new LinkedList<>(Arrays.asList(tmp)),
                 nextSubDirs = new LinkedList<>();
 
         subdirs.forEach((sub) -> {
@@ -93,6 +97,10 @@ public class Util {
         });
 
         return final_res.toArray(new String[0]);
+    }
+
+    public static void showErrorMsgbox(String text) {
+        JOptionPane.showMessageDialog(null, text, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
 

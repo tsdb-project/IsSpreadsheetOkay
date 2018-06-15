@@ -7,8 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.*;
 
 public class Validator {
 
@@ -24,13 +23,18 @@ public class Validator {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 try {
-                    newCheckTask(checkPath.getText().trim(), global_operation_sdf.format(new Date())
-                            .replace(":", "") + ".csv", 0.5);
+                    String[] paths = checkPath.getText().trim().split("\n");
+                    List<String> f = new ArrayList<>();
+                    for (String aP : paths) {
+                        f.addAll(Arrays.asList(Util.getAllSpecificFileInDirectory(aP, "csv")));
+                    }
+                    newCheckTask(f.toArray(new String[0]),
+                            global_operation_sdf.format(new Date())
+                                    .replace(":", "") + ".csv", 0.5, true);
                 } catch (IOException e1) {
                     StringWriter sw = new StringWriter();
                     e1.printStackTrace(new PrintWriter(sw));
-                    JOptionPane.showMessageDialog(
-                            null, sw.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                    Util.showErrorMsgbox(sw.toString());
                 }
             }
         });
@@ -40,6 +44,8 @@ public class Validator {
         global_operation_sdf.setTimeZone(TimeZone.getTimeZone("America/New_York"));
 
         if (args.length == 3 || args.length == 1) {
+            System.out.println("You are using command line mode...");
+
             String path_tocheck = args[0].trim(),
                     report_file_path = global_operation_sdf.format(new Date())
                             .replace(":", "") + ".csv";
@@ -54,26 +60,29 @@ public class Validator {
                 report_file_path = args[2].trim();
             }
 
-            newCheckTask(path_tocheck, report_file_path, lf);
+            newCheckTask(Util.getAllSpecificFileInDirectory(path_tocheck, "csv"), report_file_path, lf, false);
         } else {
             JFrame frame = new JFrame("Validator");
             frame.setContentPane(new Validator().panel1);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             frame.pack();
+            frame.setLocationRelativeTo(null);
             frame.setVisible(true);
         }
 
     }
 
-    private static void newCheckTask(String check_path, String report_name, double load_factor) throws IOException {
-        String[] targets = Util.getAllSpecificFileInDirectory(check_path, "csv");
+    private static void newCheckTask(String[] targets, String report_name, double load_factor, boolean gui) throws IOException {
         if (targets.length == 0) {
-            System.err.println("Nothing to check!");
+            if (gui)
+                Util.showErrorMsgbox("Nothing to check!");
+            else
+                System.err.println("Nothing to check!");
             return;
         }
 
         ReportService rs = new ReportService(report_name);
-        FileChecker fc = new FileChecker(rs, load_factor);
+        FileChecker fc = new FileChecker(rs, load_factor, gui);
 
         fc.AddArrayFiles(targets);
         fc.startCheck();

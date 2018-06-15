@@ -41,6 +41,20 @@ public class Util {
         return d.getTime();
     }
 
+    private final static FileFilter directoryFilter = File::isDirectory;
+
+    public static List<File> getAllSubDirectories(File file) {
+        List<File> subdirs = new LinkedList<>(Arrays.asList(file.listFiles(directoryFilter))),
+                nextSubDirs = new LinkedList<>();
+
+        subdirs.forEach((sub) -> {
+            nextSubDirs.addAll(getAllSubDirectories(sub));
+        });
+        subdirs.addAll(nextSubDirs);
+
+        return subdirs;
+    }
+
     /**
      * Get all specific files under a directory
      *

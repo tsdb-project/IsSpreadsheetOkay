@@ -36,21 +36,25 @@ public class Validator {
                 report_file_path = args[2].trim();
             }
 
-            String[] targets = Util.getAllSpecificFileInDirectory(path_tocheck, "csv");
-            if (targets.length == 0) {
-                System.err.println("Nothing to check!");
-                return;
-            }
-
-            ReportService rs = new ReportService(report_file_path);
-            FileChecker fc = new FileChecker(rs, lf);
-
-            fc.AddArrayFiles(targets);
-            fc.startCheck();
+            newCheckTask(path_tocheck, report_file_path, lf);
         } else {
             printHelpText();
         }
 
+    }
+
+    private static void newCheckTask(String check_path, String report_name, double load_factor) throws IOException {
+        String[] targets = Util.getAllSpecificFileInDirectory(check_path, "csv");
+        if (targets.length == 0) {
+            System.err.println("Nothing to check!");
+            return;
+        }
+
+        ReportService rs = new ReportService(report_name);
+        FileChecker fc = new FileChecker(rs, load_factor);
+
+        fc.AddArrayFiles(targets);
+        fc.startCheck();
     }
 
 }

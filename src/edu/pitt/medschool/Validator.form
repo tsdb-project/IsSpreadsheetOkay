@@ -2,35 +2,44 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="edu.pitt.medschool.Validator">
   <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
-      <xy x="20" y="20" width="663" height="131"/>
+      <xy x="20" y="20" width="400" height="125"/>
     </constraints>
     <properties>
+      <alignmentX value="1.0"/>
+      <alignmentY value="1.0"/>
       <enabled value="true"/>
+      <maximumSize width="2000" height="2000"/>
+      <minimumSize width="350" height="80"/>
+      <preferredSize width="400" height="100"/>
     </properties>
-    <border type="none"/>
+    <border type="etched"/>
     <children>
       <component id="700fa" class="javax.swing.JTextArea" binding="checkPath">
         <constraints border-constraint="Center"/>
         <properties>
+          <autoscrolls value="true"/>
+          <doubleBuffered value="false"/>
           <font swing-font="TextArea.font"/>
           <lineWrap value="true"/>
+          <margin top="3" left="3" bottom="3" right="3"/>
+          <tabSize value="2"/>
         </properties>
         <clientProperties>
           <html.disable class="java.lang.Boolean" value="true"/>
         </clientProperties>
       </component>
       <component id="7f677" class="javax.swing.JButton" binding="startButton" default-binding="true">
-        <constraints border-constraint="East"/>
+        <constraints border-constraint="South"/>
         <properties>
           <font swing-font="Button.font"/>
-          <text value="Start"/>
+          <text value="Start Checking"/>
         </properties>
       </component>
       <component id="4b387" class="javax.swing.JLabel">
         <constraints border-constraint="West"/>
         <properties>
           <font swing-font="Label.font"/>
-          <text value="Which path to check: "/>
+          <text value=" Which path to check: " noi18n="true"/>
         </properties>
       </component>
     </children>

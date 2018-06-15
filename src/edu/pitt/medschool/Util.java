@@ -63,9 +63,11 @@ public class Util {
      * @return String Full file path
      */
     public static String[] getAllSpecificFileInDirectory(String dir, String type) {
-        File folder = new File(dir);
-        if (folder.isFile()) {
-            if (dir.toLowerCase().endsWith("." + type))
+        File rootFolder = new File(dir);
+
+        // If it's not a rootFolder but a file
+        if (rootFolder.isFile()) {
+            if (!rootFolder.getName().startsWith(".") && dir.toLowerCase().endsWith("." + type))
                 return new String[]{dir};
             else
                 return new String[0];
@@ -76,31 +78,17 @@ public class Util {
             return !name.startsWith(".") && name.toLowerCase().endsWith("." + type);
         };
 
-        LinkedList<File> allMatchedPath = new LinkedList<>();
+        List<File> allDirs = Util.getAllSubDirectories(rootFolder);
+        allDirs.add(rootFolder); // Don't forget the root dir
 
-        File[] mainFileList = folder.listFiles();
-        if (mainFileList == null) return new String[0];
-
-        File[] toCheck;
-        toCheck = folder.listFiles(extensionFilter);
-        if (toCheck == null) return new String[0];
-
-        Collections.addAll(allMatchedPath, toCheck);
-
-        for (File aFile : mainFileList) {
-            if (aFile.isDirectory()) {
-                toCheck = aFile.listFiles(extensionFilter);
-                if (toCheck == null) continue;
-                Collections.addAll(allMatchedPath, toCheck);
+        List<String> final_res = new ArrayList<>();
+        allDirs.forEach(file -> {
+            File[] targets = file.listFiles(extensionFilter);
+            if (targets == null) return;
+            for (File f : targets) {
+                final_res.add(f.getAbsolutePath());
             }
-        }
-
-        List<String> final_res = new ArrayList<>(allMatchedPath.size());
-        allMatchedPath.forEach((file -> {
-            if (file.isFile()) {
-                final_res.add(file.getAbsolutePath());
-            }
-        }));
+        });
 
         return final_res.toArray(new String[0]);
     }

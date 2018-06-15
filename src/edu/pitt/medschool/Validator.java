@@ -7,7 +7,7 @@ import java.util.TimeZone;
 
 public class Validator {
 
-    public final static SimpleDateFormat global_operation_sdf = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
+    public final static SimpleDateFormat global_operation_sdf = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
 
     private static void printHelpText() {
         System.out.println("Usage: java -jar IsFileOkay.jar load_factor Path_to_check Report_file_path");
@@ -23,7 +23,8 @@ public class Validator {
 
         if (args.length == 3 || args.length == 1) {
             String path_tocheck = args[0].trim(),
-                    report_file_path = global_operation_sdf.format(new Date()) + ".csv";
+                    report_file_path = global_operation_sdf.format(new Date())
+                            .replace(":", "") + ".csv";
             double lf;
 
             if (args.length == 1) {

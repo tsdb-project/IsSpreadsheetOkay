@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.*;
 
@@ -67,8 +68,14 @@ public class FileChecker {
 
     private ReportService.Report internalCheckOne(Path pFile) throws IOException {
         String fileFullPath = pFile.toString(), fileName = pFile.getFileName().toString();
-        System.out.println("Checking file: " + fileFullPath);
+        System.out.println(String.format(
+                "[%s] Checking file: %s", Validator.global_operation_sdf.format(new Date()), fileFullPath));
         ReportService.Report fileReport = new ReportService.Report(fileFullPath, fileName, Files.size(pFile));
+
+        if (!fileName.toUpperCase().startsWith("PUH")) {
+            fileReport.addHardProblem("Naming incorrect!");
+            return fileReport;
+        }
 
         String[] fileInfo = checkerFromFilename(fileName);
         String pid = fileInfo[0];

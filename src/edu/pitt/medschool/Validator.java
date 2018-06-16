@@ -1,8 +1,13 @@
 package edu.pitt.medschool;
 
 import javax.swing.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -15,15 +20,33 @@ public class Validator {
 
     private JButton startButton;
     private JPanel panel1;
-    private JTextArea checkPath;
+    private JTextArea checkTextArea;
 
     public Validator() {
+        checkTextArea.setDropTarget(new DropTarget() {
+            public synchronized void drop(DropTargetDropEvent evt) {
+                try {
+                    if (evt.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                        evt.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
+                        List<File> droppedFiles = (List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+                        for (File file : droppedFiles) {
+                            checkTextArea.append(file.getPath() + "\n");
+                        }
+                    }
+                } catch (Exception ex) {
+                    StringWriter sw = new StringWriter();
+                    ex.printStackTrace(new PrintWriter(sw));
+                    Util.showErrorMsgbox(sw.toString());
+                }
+            }
+        });
+
         startButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 try {
-                    String[] paths = checkPath.getText().trim().split("\n");
+                    String[] paths = checkTextArea.getText().trim().split("\n");
                     List<String> f = new ArrayList<>();
                     for (String aP : paths) {
                         f.addAll(Arrays.asList(Util.getAllSpecificFileInDirectory(aP, "csv")));

@@ -33,7 +33,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="700fa" class="javax.swing.JTextArea" binding="checkPath">
+          <component id="700fa" class="javax.swing.JTextArea" binding="checkTextArea">
             <constraints/>
             <properties>
               <autoscrolls value="true"/>

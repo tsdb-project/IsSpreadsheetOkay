@@ -14,20 +14,6 @@
     </properties>
     <border type="etched"/>
     <children>
-      <component id="700fa" class="javax.swing.JTextArea" binding="checkPath">
-        <constraints border-constraint="Center"/>
-        <properties>
-          <autoscrolls value="true"/>
-          <doubleBuffered value="false"/>
-          <font swing-font="TextArea.font"/>
-          <lineWrap value="true"/>
-          <margin top="3" left="3" bottom="3" right="3"/>
-          <tabSize value="2"/>
-        </properties>
-        <clientProperties>
-          <html.disable class="java.lang.Boolean" value="true"/>
-        </clientProperties>
-      </component>
       <component id="7f677" class="javax.swing.JButton" binding="startButton" default-binding="true">
         <constraints border-constraint="South"/>
         <properties>
@@ -42,6 +28,27 @@
           <text value=" Which path to check: " noi18n="true"/>
         </properties>
       </component>
+      <scrollpane id="3e28a">
+        <constraints border-constraint="Center"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="700fa" class="javax.swing.JTextArea" binding="checkPath">
+            <constraints/>
+            <properties>
+              <autoscrolls value="true"/>
+              <doubleBuffered value="false"/>
+              <font swing-font="TextArea.font"/>
+              <lineWrap value="false"/>
+              <margin top="3" left="3" bottom="3" right="3"/>
+              <tabSize value="2"/>
+            </properties>
+            <clientProperties>
+              <html.disable class="java.lang.Boolean" value="true"/>
+            </clientProperties>
+          </component>
+        </children>
+      </scrollpane>
     </children>
   </grid>
 </form>

@@ -99,8 +99,8 @@ public class Util {
         return final_res.toArray(new String[0]);
     }
 
-    public static void showErrorMsgbox(String text) {
-        JOptionPane.showMessageDialog(null, text, "Error", JOptionPane.ERROR_MESSAGE);
+    public static void showMsgbox(String text, String title, int type) {
+        JOptionPane.showMessageDialog(null, text, title, type);
     }
 
 

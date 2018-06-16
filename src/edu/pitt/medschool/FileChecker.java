@@ -55,8 +55,7 @@ public class FileChecker {
             scheduler.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
             rs.closeService();
             if (isGUIMode)
-                JOptionPane.showMessageDialog(
-                        null, "Checking finished", "Info", JOptionPane.INFORMATION_MESSAGE);
+                showMsgbox("Checking finished!", "Done!", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception e) {
             e.printStackTrace();
         }

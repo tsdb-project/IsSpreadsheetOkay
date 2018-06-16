@@ -36,7 +36,7 @@ public class Validator {
                 } catch (Exception ex) {
                     StringWriter sw = new StringWriter();
                     ex.printStackTrace(new PrintWriter(sw));
-                    Util.showErrorMsgbox(sw.toString());
+                    Util.showMsgbox(sw.toString(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -57,7 +57,7 @@ public class Validator {
                 } catch (IOException e1) {
                     StringWriter sw = new StringWriter();
                     e1.printStackTrace(new PrintWriter(sw));
-                    Util.showErrorMsgbox(sw.toString());
+                    Util.showMsgbox(sw.toString(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -98,7 +98,7 @@ public class Validator {
     private static void newCheckTask(String[] targets, String report_name, double load_factor, boolean gui) throws IOException {
         if (targets.length == 0) {
             if (gui)
-                Util.showErrorMsgbox("Nothing to check!");
+                Util.showMsgbox("Nothing to check!", "Warning", JOptionPane.WARNING_MESSAGE);
             else
                 System.err.println("Nothing to check!");
             return;
@@ -108,6 +108,7 @@ public class Validator {
         FileChecker fc = new FileChecker(rs, load_factor, gui);
 
         fc.AddArrayFiles(targets);
+        Util.showMsgbox("Start to check, the window will be unresponsive!", "Starting...", JOptionPane.INFORMATION_MESSAGE);
         fc.startCheck();
     }
 

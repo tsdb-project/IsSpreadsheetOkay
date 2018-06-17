@@ -23,6 +23,7 @@ public class Validator {
     private JTextArea checkTextArea;
 
     public Validator() {
+        // Drag Drop (DnD) logic code
         checkTextArea.setDropTarget(new DropTarget() {
             public synchronized void drop(DropTargetDropEvent evt) {
                 try {
@@ -32,6 +33,8 @@ public class Validator {
                         for (File file : droppedFiles) {
                             checkTextArea.append(file.getPath() + "\n");
                         }
+                    } else {
+                        evt.rejectDrop();
                     }
                 } catch (Exception ex) {
                     StringWriter sw = new StringWriter();
@@ -41,6 +44,7 @@ public class Validator {
             }
         });
 
+        // Button logic code
         startButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -51,9 +55,19 @@ public class Validator {
                     for (String aP : paths) {
                         f.addAll(Arrays.asList(Util.getAllSpecificFileInDirectory(aP, "csv")));
                     }
-                    newCheckTask(f.toArray(new String[0]),
-                            global_operation_sdf.format(new Date())
-                                    .replace(":", "") + ".csv", 0.5, true);
+                    if (f.size() == 0) {
+                        Util.showMsgbox("Nothing to check!", "Warning", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+
+                    String defName = global_operation_sdf.format(new Date()).replace(":", "");
+                    Object finalName = JOptionPane.showInputDialog(
+                            null, "Please enter file name for the report",
+                            "Report file name", JOptionPane.QUESTION_MESSAGE, null, null, defName);
+                    // If user cancelled the above input box then don't proceed
+                    if (finalName == null) return;
+
+                    newCheckTask(f.toArray(new String[0]), finalName + ".csv", 0.5, true);
                 } catch (IOException e1) {
                     StringWriter sw = new StringWriter();
                     e1.printStackTrace(new PrintWriter(sw));
@@ -96,11 +110,8 @@ public class Validator {
     }
 
     private static void newCheckTask(String[] targets, String report_name, double load_factor, boolean gui) throws IOException {
-        if (targets.length == 0) {
-            if (gui)
-                Util.showMsgbox("Nothing to check!", "Warning", JOptionPane.WARNING_MESSAGE);
-            else
-                System.err.println("Nothing to check!");
+        if (!gui && targets.length == 0) {
+            System.err.println("Nothing to check!");
             return;
         }
 

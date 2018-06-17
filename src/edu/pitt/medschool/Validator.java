@@ -66,8 +66,9 @@ public class Validator {
                             "Report file name", JOptionPane.QUESTION_MESSAGE, null, null, defName);
                     // If user cancelled the above input box then don't proceed
                     if (finalName == null) return;
+                    String concatName = ((String) finalName).trim() + ".csv";
 
-                    newCheckTask(f.toArray(new String[0]), finalName + ".csv", 0.5, true);
+                    newCheckTask(f.toArray(new String[0]), concatName, 0.5, true);
                 } catch (IOException e1) {
                     StringWriter sw = new StringWriter();
                     e1.printStackTrace(new PrintWriter(sw));

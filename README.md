@@ -2,6 +2,12 @@
 
 Supports multi-threading, recursively list folders and so-on, extracted from BrainFlux.
 
+## User guide
+
+Really strightforward program, anyone could use it.
+
+Tested on: Windows & MacOS with **Oracle/Redhat JDK1.8**.
+
 ## DEV guide
 
 - `src` is the source code directory

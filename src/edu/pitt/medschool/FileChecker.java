@@ -8,6 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.*;
 
@@ -129,6 +131,8 @@ public class FileChecker {
         // More integrity checking
         if (!columnNames[0].toLowerCase().equals("clockdatetime")) {
             fileReport.addHardProblem("Wrong first column!");
+            reader.close();
+            return fileReport;
         }
 
         long totalLines = 0;
@@ -163,19 +167,17 @@ public class FileChecker {
             previous_line_timestamp = measurement_epoch_time;
 
             // Try parse
-            int parseProblemId = -1;
+            List<String> parseProblemId = new LinkedList<>();
             for (int i = 1; i < values.length; i++) {
                 try {
                     Double.valueOf(values[i]);
                 } catch (NumberFormatException e) {
-                    parseProblemId = i;
-                    break;
+                    parseProblemId.add(String.valueOf(i));
                 }
             }
-            if (parseProblemId != -1) {
+            if (parseProblemId.size() != 0) {
                 fileReport.addSoftProblem(totalLines + 8, String.format(
-                        "Failed to parse the #%d number", parseProblemId + 1));
-                continue;
+                        "Failed to parse number #'%s'", String.join(", ", parseProblemId)));
             }
 
             // And more?

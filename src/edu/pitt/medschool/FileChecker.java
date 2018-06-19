@@ -126,15 +126,15 @@ public class FileChecker {
 
         long totalLines = 0;
         String aLine;
+        long previous_line_timestamp = test_start_time;
         while ((aLine = reader.readLine()) != null) {
             String[] values = aLine.split(",");
             totalLines++;
 
             // Check this line generally
             if (columnCount != values.length) {
-                fileReport.addSoftProblem(String.format(
-                        "Column count error on line %d, expect %d found %d!",
-                        totalLines + 8, columnCount, values.length));
+                fileReport.addSoftProblem(totalLines + 8, String.format(
+                        "expect %d found %d", columnCount, values.length));
                 continue;
             }
 
@@ -142,10 +142,19 @@ public class FileChecker {
             // Measurement time should be later than test start time
             long measurement_epoch_time = Util.serialTimeToLongDate(values[0], null);
             if (measurement_epoch_time < test_start_time) {
-                fileReport.addSoftProblem(String.format(
-                        "Measurement time earlier than test start time on line %d!", totalLines + 8));
+                // Recalibrate time when DST shifts
+                if (totalLines == 1) {
+                    previous_line_timestamp = measurement_epoch_time;
+                }
+                fileReport.addSoftProblem(totalLines + 8, "Measurement time earlier than test start time");
                 continue;
             }
+
+            // Possible time overlap?
+            if (previous_line_timestamp > measurement_epoch_time) {
+                fileReport.addSoftProblem(totalLines + 8, "Possible overlap occurred");
+            }
+            previous_line_timestamp = measurement_epoch_time;
 
             // Try parse
             int parseProblemId = -1;
@@ -158,8 +167,8 @@ public class FileChecker {
                 }
             }
             if (parseProblemId != -1) {
-                fileReport.addSoftProblem(String.format(
-                        "Failed to parse the #%d number on line %d!", parseProblemId + 1, totalLines + 8));
+                fileReport.addSoftProblem(totalLines + 8, String.format(
+                        "Failed to parse the #%d number", parseProblemId + 1));
                 continue;
             }
 

@@ -11,14 +11,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ReportService {
 
     private AtomicInteger counter = new AtomicInteger(0);
-    private static String writeOutDataTemplate = "%d,\"%s\",\"%s\",%d,\"%s\",\"%s\",\"%s\"";
+    private static String writeOutDataTemplate = "%d,\"%s\",\"%s\",%d,\"%s\",\"%s\",%d,\"%s\"";
 
     public static class Report {
         private String filepath, filename, eegUUID;
         private long filesize;
 
         private LinkedList<String> hardProblem = new LinkedList<>();
-        private LinkedList<String> softProblem = new LinkedList<>();
+        private LinkedList<String> softProblemDetails = new LinkedList<>();
+        private LinkedList<Long> softProblemCorrespondingLine = new LinkedList<>();
 
         public Report(String fp, String fn, long fs) {
             this.filepath = fp;
@@ -30,16 +31,23 @@ public class ReportService {
             this.eegUUID = eegUUID;
         }
 
+        public int getSoftProblemsCount() {
+            return softProblemDetails.size();
+        }
+
         public boolean isAllGood() {
-            return (hardProblem.size() + softProblem.size()) == 0;
+            if (softProblemCorrespondingLine.size() != softProblemDetails.size())
+                return false;
+            return (hardProblem.size() + softProblemDetails.size()) == 0;
         }
 
         public void addHardProblem(String s) {
             hardProblem.add(s);
         }
 
-        public void addSoftProblem(String s) {
-            softProblem.add(s);
+        public void addSoftProblem(long line, String s) {
+            softProblemCorrespondingLine.add(line);
+            softProblemDetails.add(s);
         }
 
     }
@@ -47,7 +55,7 @@ public class ReportService {
     private BufferedWriter bw;
 
     private void initHeaders() throws IOException {
-        bw.write("id,File Name,File Path,File Size,EEG UUID,Problem Type,Comments");
+        bw.write("id,File Name,File Path,File Size,EEG UUID,Problem Type,Line Number,Comments");
         bw.newLine();
         bw.flush();
     }
@@ -66,14 +74,14 @@ public class ReportService {
                 bw.write(String.format(writeOutDataTemplate,
                         counter.getAndIncrement(),
                         data.filename, data.filepath, data.filesize, data.eegUUID,
-                        "Critical", hard));
+                        "Critical", -1, hard));
                 bw.newLine();
             }
-            for (String soft : data.softProblem) {
+            for (int i = 0; i < data.getSoftProblemsCount(); i++) {
                 bw.write(String.format(writeOutDataTemplate,
                         counter.getAndIncrement(),
                         data.filename, data.filepath, data.filesize, data.eegUUID,
-                        "Warning", soft));
+                        "Warning", data.softProblemCorrespondingLine.get(i), data.softProblemDetails.get(i)));
                 bw.newLine();
             }
             bw.flush();

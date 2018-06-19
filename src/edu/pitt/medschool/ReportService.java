@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ReportService {
 
     private AtomicInteger counter = new AtomicInteger(0);
-    private static String writeOutDataTemplate = "%d,\"%s\",\"%s\",%d,\"%s\",\"%s\",%d,\"%s\"";
+    private static String writeOutDataTemplate = "%d,\"%s\",\"%s\",%d,\"%s\",\"%s\",%s,\"%s\"";
 
     public static class Report {
         private String filepath, filename, eegUUID;
@@ -74,7 +74,7 @@ public class ReportService {
                 bw.write(String.format(writeOutDataTemplate,
                         counter.getAndIncrement(),
                         data.filename, data.filepath, data.filesize, data.eegUUID,
-                        "Critical", -1, hard));
+                        "Critical", "", hard));
                 bw.newLine();
             }
             for (int i = 0; i < data.getSoftProblemsCount(); i++) {

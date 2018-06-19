@@ -117,7 +117,7 @@ public class Validator {
         }
 
         ReportService rs = new ReportService(report_name);
-        FileChecker fc = new FileChecker(rs, load_factor, gui);
+        FileChecker fc = new FileChecker(rs, load_factor, gui, TimeZone.getTimeZone("America/New_York"));
 
         fc.AddArrayFiles(targets);
         Util.showMsgbox("Start to check, the window will be unresponsive!", "Starting...", JOptionPane.INFORMATION_MESSAGE);

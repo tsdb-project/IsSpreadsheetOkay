@@ -23,13 +23,15 @@ public class FileChecker {
     private ReportService rs;
     private final BlockingQueue<Path> fileQueue = new LinkedBlockingQueue<>();
     private boolean isGUIMode;
+    private TimeZone tz;
 
-    public FileChecker(ReportService r, double loadFactor, boolean gui) throws IOException {
+    public FileChecker(ReportService r, double loadFactor, boolean gui, TimeZone t) {
         int availCores = Runtime.getRuntime().availableProcessors();
         this.isGUIMode = gui;
         paraCount = (int) Math.round(loadFactor * availCores);
         paraCount = paraCount > 0 ? paraCount : 1;
         rs = r;
+        tz = t;
     }
 
     /**
@@ -107,12 +109,17 @@ public class FileChecker {
             }
         }
         long test_start_time = -1;
+        Date tmp = null;
         try {
-            test_start_time = dateTimeFormatToTimestamp(
-                    test_date, "yyyy.MM.ddHH:mm:ss", TimeZone.getTimeZone("America/New_York"));
+            tmp = dateTimeFormatToDate(test_date, "yyyy.MM.ddHH:mm:ss", tz);
+            test_start_time = tmp.toInstant().toEpochMilli();
         } catch (ParseException e) {
             fileReport.addHardProblem("Test date malformation");
         }
+
+        // Annoying DST!!!
+        if (Util.isThisDayOnDstShift(tz, tmp))
+            fileReport.addSoftProblem(5, "DST shifts today");
 
         // 8th Line is column header line
         String eiL = reader.readLine();
@@ -147,7 +154,6 @@ public class FileChecker {
                     previous_line_timestamp = measurement_epoch_time;
                 }
                 fileReport.addSoftProblem(totalLines + 8, "Measurement time earlier than test start time");
-                continue;
             }
 
             // Possible time overlap?

@@ -11,9 +11,20 @@ import java.util.*;
 
 public class Util {
 
+    /**
+     * Functions as func name, ignore 2am-3am
+     */
+    public static boolean isThisDayOnDstShift(TimeZone tz, Date now) {
+        Calendar c = Calendar.getInstance(tz);
+        c.setTime(now);
+        c.set(Calendar.HOUR_OF_DAY, 12); // We want to ignore 2am-3am problems
+        Date normalized_now = c.getTime();
+        c.add(Calendar.DATE, -1);
+        Date dayBefore = c.getTime();
+        return tz.inDaylightTime(dayBefore) != tz.inDaylightTime(normalized_now);
+    }
+
     public static Date dateTimeFormatToDate(String dateTime, String format, TimeZone timeZone) throws ParseException {
-        if (timeZone == null)
-            timeZone = TimeZone.getTimeZone("America/New_York");
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         sdf.setTimeZone(timeZone);
         return sdf.parse(dateTime);
